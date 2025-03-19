@@ -1,10 +1,12 @@
 
 using MagicVilla_VillaAPI;
 using MagicVilla_VillaAPI.Data;
+using MagicVilla_VillaAPI.Models;
 using MagicVilla_VillaAPI.Repository;
 using MagicVilla_VillaAPI.Repository.IRepository;
 using MagicVilla_VillaAPI.Repository.IRepostiory;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -18,6 +20,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(option => {
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
 });
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddResponseCaching();
 builder.Services.AddScoped<IVillaRepository, VillaRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -33,6 +37,8 @@ builder.Services.AddVersionedApiExplorer(options =>
     options.GroupNameFormat = "'v'VVV";
     options.SubstituteApiVersionInUrl = true;
 });
+
+
 var key = builder.Configuration.GetValue<string>("ApiSettings:Secret");
 
 builder.Services.AddAuthentication(x =>
@@ -50,7 +56,7 @@ builder.Services.AddAuthentication(x =>
             ValidateIssuer = false,
             ValidateAudience = false
         };
-    }); ;
+    });
 
 builder.Services.AddControllers(option => {
     option.CacheProfiles.Add("Default30",
@@ -60,12 +66,6 @@ builder.Services.AddControllers(option => {
        });
     //option.ReturnHttpNotAcceptable=true;
 }).AddNewtonsoftJson().AddXmlDataContractSerializerFormatters();
-
-
-
-
-
-
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options => {
