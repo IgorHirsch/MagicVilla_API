@@ -69,6 +69,13 @@ namespace MagicVilla_VillaAPI.Repository
             return loginResponseDTO;
         }
 
+
+
+
+
+
+
+
         public async Task<LocalUser> Register(RegisterationRequestDTO registerationRequestDTO)
         {
             LocalUser user = new()
@@ -76,7 +83,7 @@ namespace MagicVilla_VillaAPI.Repository
                 UserName = registerationRequestDTO.UserName,
                 Password = registerationRequestDTO.Password,
                 Name = registerationRequestDTO.Name,
-                Role = registerationRequestDTO.Role
+                Role = "admin"
             };
 
             _db.LocalUsers.Add(user);
